@@ -273,13 +273,8 @@ def submit_comments(clicks, name, val1, val2, val3, val4, val5):
     [State('input-name','value'),
     State('input-age','value')])
 def submit_name(clicks, submit, name, age):
-    works = appfunction.access_wsheet('att behaviour')
-    sub_row = works.find(name).row
-    works.update_cell(sub_row, works.find('Akhlaq').col, val1)
-    works.update_cell(sub_row, works.find('Discipline').col, val2)
-    works.update_cell(sub_row, works.find('Diligent').col, val3)
-    works.update_cell(sub_row, works.find('Interaction').col, val4)
-    works.update_cell(sub_row, works.find('Respect').col, val5)
+    wks.update_cell(sub_row, works.find('Akhlaq').col, name)
+    wks.update_cell(sub_row, works.find('Discipline').col, age)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

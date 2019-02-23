@@ -125,6 +125,7 @@ def serve_layout():
                 dcc.Tab(label='Submit Marks and Grade (Academics)', value='tab-submit-grade'),
                 dcc.Tab(label='Submit Notes (Academics)', value='tab-submit-note'),
                 dcc.Tab(label='Submit Behaviour or Affectiveness', value='tab-submit-behaviour'),
+                dcc.Tab(label='Submit or Update Student', value='tab-submit-name'),
                 ])], className="no-print"),
         html.Div(id='tab-contents')
         ])
@@ -147,6 +148,8 @@ def render_content(tab):
         return submit_notes.layout
     elif tab == 'tab-submit-behaviour':
         return submit_behaviour.layout
+    elif tab == 'tab-submit-name':
+        return submit_name.layout
 
 #selected person
 @app.callback(

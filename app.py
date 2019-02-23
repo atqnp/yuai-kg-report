@@ -81,7 +81,7 @@ app.index_string = '''
         {%favicon%}
         {%css%}
     </head>
-    <body>
+    <body class="A4">
         {%app_entry%}
         <footer>
             {%config%}
@@ -158,7 +158,7 @@ def display_value(name):
 def display_info(name,sem):
     dfi = df[df.Name.isin([name])]
     return html.Div([html.P('Name : {}'.format(name)),
-        html.Br(), html.P('Age : {}'.format(dfi['Age'])),
+        html.Br(), html.P('Age : {}'.format(dfi[['Age']])),
         html.Br(), html.P('Semester : {}'.format(sem)),
         ])
 

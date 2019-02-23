@@ -157,7 +157,7 @@ def render_content(tab):
     [Input('name-dropdown','value')])
 def display_value(name):
     dfi = df[df.Name.isin([name])]
-    age = dfi['Age']
+    age = dfi['Age'].item()
     return html.P('You have selected:'), html.P('{} - Age {}'.format(name, age))
 
 #full report page - student's data
@@ -167,7 +167,7 @@ def display_value(name):
     Input('semester-dropdown','value')])
 def display_info(name,sem):
     dfi = df[df.Name.isin([name])]
-    age = dfi['Age']
+    age = dfi['Age'].item()
     return html.Div([html.P('Name : {}'.format(name)),
         html.Br(), html.P('Age : {}'.format(age)),
         html.Br(), html.P('Semester : {}'.format(sem)),

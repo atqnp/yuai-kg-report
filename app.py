@@ -156,7 +156,8 @@ def render_content(tab):
     Output('display-value','children'), 
     [Input('name-dropdown','value')])
 def display_value(name):
-    return html.P('You have selected:'), html.P('{} Year {} - {}'.format(level,year,name))
+    row = (wks.find(name).row - 1)
+    return html.P('You have selected:'), html.P('{} - Age'.format(name, df.at[row,'Age']))
 
 #full report page - student's data
 @app.callback(
@@ -164,9 +165,9 @@ def display_value(name):
     [Input('name-dropdown','value'),
     Input('semester-dropdown','value')])
 def display_info(name,sem):
-    dfi = df[df.Name.isin([name])]
+    row = (wks.find(name).row - 1)
     return html.Div([html.P('Name : {}'.format(name)),
-        html.Br(), html.P('Age : {}'.format(dfi[['Age']])),
+        html.Br(), html.P('Age : {}'.format(df.at[row,'Age'])),
         html.Br(), html.P('Semester : {}'.format(sem)),
         ])
 

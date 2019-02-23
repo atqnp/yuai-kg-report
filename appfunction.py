@@ -75,11 +75,11 @@ def update_name(name,age):
         #Body
         [html.Tr(
             [html.Td(name)] + 
-            [html.Td(age)]
+            [html.Td(age)] +
             [html.Td(html.Div(dcc.Input(id='update-age',type='text')))]
             )] +
         [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-update-button')))] +
+            [html.Td(html.Div(html.Button('Submit',id='submit-update-button')))]
             )] +
         [html.Tr(
             [html.Td(html.Div(id='container-update'),colSpan='2')]

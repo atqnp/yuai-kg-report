@@ -10,7 +10,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from oauth2client.service_account import ServiceAccountCredentials
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from apps import report, submit_grade, submit_behaviour, submit_notes, submit_name
+from apps import report, submit1, submit2, submit5, submit6
 
 scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
@@ -143,13 +143,13 @@ def render_content(tab):
     if tab == 'tab-report':
         return report.layout
     elif tab == 'tab-submit-grade':
-        return submit_grade.layout
+        return submit1.layout
     elif tab == 'tab-submit-note':
-        return submit_notes.layout
+        return submit2.layout
     elif tab == 'tab-submit-behaviour':
-        return submit_behaviour.layout
+        return submit5.layout
     elif tab == 'tab-submit-name':
-        return submit_name.layout
+        return submit6.layout
 
 #selected person
 @app.callback(

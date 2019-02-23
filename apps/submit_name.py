@@ -14,7 +14,7 @@ layout = html.Div(
         html.Div([dcc.Dropdown(
                 id='update-dropdown',
                 options=[{'label':i,'value':j} for i,j in zip(selection.values(),selection.keys())],
-                placeholder="Select an item",
+                placeholder="Select an item"
                 )]),
         html.Div(id='display-submit'),
     ], className="sheet padding-10mm"

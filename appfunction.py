@@ -61,7 +61,7 @@ def new_name():
             [html.Td(html.Div(dcc.Input(id='input-age',type='text')))]
                 )] +
         [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-new-button')))] +
+            [html.Td(html.Div(html.Button('Submit',id='submit-new-button')))]
             )] +
         [html.Tr(
             [html.Td(html.Div(id='container-new'),colSpan='2')]

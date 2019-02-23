@@ -11,12 +11,12 @@ layout = html.Div(
     [
         html.Hr(),
         html.H5("Submit/Update new student"),
-        html.Hr(),
         html.Div([dcc.Dropdown(
                 id='update-dropdown',
                 options=[{'label':i,'value':j} for i,j in zip(selection.values(),selection.keys())],
                 placeholder="Select an item"
                 )]),
+        html.Hr(),
         html.Div(id='display-submit'),
     ], className="sheet padding-10mm"
     )

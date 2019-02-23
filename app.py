@@ -4,6 +4,7 @@ import dash
 import gspread
 import pandas as pd
 import appfunction
+import dash_auth
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -71,6 +72,10 @@ sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
 sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
 
 app = dash.Dash(__name__)
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 app.index_string = '''
 <!DOCTYPE html>

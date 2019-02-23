@@ -22,7 +22,7 @@ layout = html.Div(
 			html.Hr(),
 			html.H5('Reports of all Academics Achievement'),
 			html.Div(id='display-grade'),
-			html.Br(),
+			html.Hr(),
 			html.P('Select the subject you wish to submit the marks:'),
 			html.Div([dcc.Dropdown(
 				id='subject-dropdown',
@@ -30,6 +30,7 @@ layout = html.Div(
 				placeholder="Select subject"
 				)]		
 			),
+            html.Br(),
 			html.Div(id='submit-subject-marks')
 		], className="sheet padding-10mm"
 	)

@@ -9,6 +9,7 @@ layout = html.Div(
                 html.Hr(),
                 html.H6('Academics Achievement'),
                 html.Div(id='display-grade'),
+                html.Hr(),
                 html.H6("Behaviour/Affectiveness"),
                 html.Div(id='display-attitude'),
                 ], className="sheet padding-10mm"),

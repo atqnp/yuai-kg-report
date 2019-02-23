@@ -270,16 +270,49 @@ def submit_comments(clicks, name, val1, val2, val3, val4, val5):
     works.update_cell(sub_row, works.find('Interaction').col, val4)
     works.update_cell(sub_row, works.find('Respect').col, val5)
 
+#submit_name - selection
+@app.callback(
+    Output('display-submit','children'), 
+    [Input('update-dropdown','value'),
+    Input('name-dropdown','value')])
+def display_selection(value,name):
+    dfi = df[df.Name.isin([name])]
+    if value == 'UP':
+        return appfunction.update_name(name,dfi[['Age']])
+    elif value == 'SUB':
+        return appfunction.new_name()
+
 #submit_name - new student submission
 @app.callback(
-    Output('container-name','children'),
-    [Input('submit-name-button','n_clicks'),
-    Input('submit-name-button','n_submit')],
+    Output('container-new','children'),
+    [Input('submit-new-button','n_clicks'),
+    Input('submit-new-button','n_submit')],
     [State('input-name','value'),
     State('input-age','value')])
 def submit_name(clicks, submit, name, age):
-    wks.update_cell(sub_row, works.find('Akhlaq').col, name)
-    wks.update_cell(sub_row, works.find('Discipline').col, age)
+    def next_available_row(worksheet):
+        str_list = list(filter(None, worksheet.col_values(1)))
+        return len(str_list)+1
+
+    next_row = next_available_row(wks)
+    #column, row, input item
+    if not name in list(df['Name']):
+        wks.update_cell(next_row,1,name)
+        wks.update_cell(next_row,2,age)
+        return html.P('You have added:'), html.P('{} - Age: {}'.format(name, age))
+    else:
+        return html.P('The name is already available.')
+
+#submit_name - update student info
+@app.callback(
+    Output('container-update','children'),
+    [Input('submit-update-button','n_clicks'),
+    Input('submit-update-button','n_submit'),
+    Input('name-dropdown','value')],
+    [State('update-age','value')])
+def submit_update(clicks, submit, name, age):
+    sub_row = wks.find(name).row
+    wks.update_cell(sub_row, 2, age)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

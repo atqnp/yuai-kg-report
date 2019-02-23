@@ -156,8 +156,8 @@ def render_content(tab):
     Output('display-value','children'), 
     [Input('name-dropdown','value')])
 def display_value(name):
-    row = (wks.find(name).row - 1)
-    return html.P('You have selected:'), html.P('{} - Age'.format(name, df.at[row,'Age']))
+    dfi = df[df.Name.isin([name])]
+    return html.P('You have selected:'), html.P('{} - Age {}'.format(name, dfi['Age']))
 
 #full report page - student's data
 @app.callback(
@@ -165,9 +165,9 @@ def display_value(name):
     [Input('name-dropdown','value'),
     Input('semester-dropdown','value')])
 def display_info(name,sem):
-    row = (wks.find(name).row - 1)
+    dfi = df[df.Name.isin([name])]
     return html.Div([html.P('Name : {}'.format(name)),
-        html.Br(), html.P('Age : {}'.format(df.at[row,'Age'])),
+        html.Br(), html.P('Age : {}'.format(dfi['Age'])),
         html.Br(), html.P('Semester : {}'.format(sem)),
         ])
 
@@ -282,7 +282,7 @@ def submit_comments(clicks, name, val1, val2, val3, val4, val5):
 def display_selection(value,name):
     dfi = df[df.Name.isin([name])]
     if value == 'UP':
-        return appfunction.update_name(name,dfi[['Age']])
+        return appfunction.update_name(name,dfi['Age'])
     elif value == 'SUB':
         return appfunction.new_name()
 

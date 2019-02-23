@@ -236,7 +236,7 @@ def comments_submit_table(subcode,name):
     Input('subject-dropdown','value')],
     [State('input-comments','value')])
 def submit_comments(clicks, name, subcode, value):
-    works = appfunction.access_wsheet('comments')
+    works = appfunction.access_wsheet('com')
     sub_row = works.find(name).row
     sub_col = works.find((subject.get(subcode)).upper()).col
     works.update_cell(sub_row,sub_col,value)

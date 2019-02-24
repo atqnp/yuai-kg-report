@@ -2,6 +2,7 @@ import time
 import os
 import dash
 import gspread
+import fiscalyear
 import pandas as pd
 import appfunction
 import dash_auth
@@ -54,7 +55,13 @@ def get_new_update(period=UPDATE_INTERVAL):
         get_data()
         time.sleep(period)
 
-select_sem = ['{}/2018/19'.format(num) for num in range(1,4)]
+#set fiscal year (1st apr)
+fiscalyear.START_YEAR = 'same'
+fiscalyear.START_MONTH = 4
+fiscalyear.START_DATE = 1
+year_now = FiscalDate.today().fiscal_year
+
+select_sem = ['{}/{}/{}'.format(num,year_now,year_now+1) for num in range(1,4)]
 
 #List of subject
 subject = {'MT':'Mathematics',

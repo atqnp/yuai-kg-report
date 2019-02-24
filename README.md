@@ -6,6 +6,7 @@ v1.0
 - finish compiling all item
 - pushed for deployment
 - submitted to YUAI
+- added fiscal year function
 
 v0.7
 ----

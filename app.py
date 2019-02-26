@@ -44,7 +44,7 @@ UPDATE_INTERVAL = 30
 #DataFrame spreadsheet
 def get_data():
     #updates the data
-    global df
+    global df, wks
     file = gspread.authorize(credentials)
     sheet = file.open("Semester 1 report card (KG) 2018/2019")
     wks = sheet.worksheet("master")
@@ -227,10 +227,11 @@ def marks_submit_table(subcode,name):
 @app.callback(
     Output('container-marks','children'),
     [Input('submit-marks-button','n_clicks'),
+    Input('submit-marks-button','n_submit'),
     Input('name-dropdown','value'),
     Input('subject-dropdown','value')],
     [State('input-marks','value')])
-def submit_marks(clicks, name, subcode, value):
+def submit_marks(clicks, submit, name, subcode, value):
     works = appfunction.access_wsheet('marks')
     sub_row = works.find(name).row
     sub_col = works.find((subject.get(subcode)).upper()).col
@@ -250,10 +251,11 @@ def comments_submit_table(subcode,name):
 @app.callback(
     Output('container-comments','children'),
     [Input('submit-comments-button','n_clicks'),
+    Input('submit-comments-button','n_submit'),
     Input('name-dropdown','value'),
     Input('subject-dropdown','value')],
     [State('input-comments','value')])
-def submit_comments(clicks, name, subcode, value):
+def submit_comments(clicks, submit, name, subcode, value):
     works = appfunction.access_wsheet('com')
     sub_row = works.find(name).row
     sub_col = works.find((subject.get(subcode)).upper()).col
@@ -271,10 +273,11 @@ def submit_attitude(name):
 @app.callback(
     Output('container-att','children'),
     [Input('submit-att-button','n_clicks'),
+    Input('submit-att-button','n_submit'),
     Input('name-dropdown','value')],
     [State('input-att-1','value'), State('input-att-2','value'), State('input-att-3','value'),
     State('input-att-4','value'), State('input-att-5','value')])
-def submit_comments(clicks, name, val1, val2, val3, val4, val5):
+def submit_comments(clicks, submit, name, val1, val2, val3, val4, val5):
     works = appfunction.access_wsheet('att behaviour')
     sub_row = works.find(name).row
     works.update_cell(sub_row, works.find('Akhlaq').col, val1)

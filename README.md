@@ -1,6 +1,10 @@
 # yuai-kg-report
 YUAI Kindergarten Report Card
 
+v1.1
+----
+- bug fixes
+
 v1.0
 ----
 - finish compiling all item

@@ -132,7 +132,7 @@ def attendance(dataframe,period):
         #Body
         [html.Tr([html.Td('School days')] + [html.Td(dataframe['School days'],style=center)] + [html.Td(dataframe['Percentage'],style=center,rowSpan='3')])] +
         [html.Tr([html.Td('Days of late')] + [html.Td(dataframe['Days of late'],style=center)])] +
-        [html.Tr([html.Td('Days of late')] + [html.Td(dataframe['Days of late'],style=center)])]
+        [html.Tr([html.Td('Days of absent')] + [html.Td(dataframe['Days of absent'],style=center)])]
         )
 
 def comments(dataframe):

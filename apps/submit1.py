@@ -13,10 +13,6 @@ subject = {'MT':'Mathematics',
             'TF':'Tahfidz Juz 30',  
             'QR':'Qiraati (Nurul Bayan)'} 
 
-sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
-sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
-sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
-
 layout = html.Div(
 		[
 			html.Hr(),

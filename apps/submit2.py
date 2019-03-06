@@ -13,15 +13,11 @@ subject = {'MT':'Mathematics',
             'TF':'Tahfidz Juz 30',  
             'QR':'Qiraati (Nurul Bayan)'} 
 
-sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
-sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
-sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
-
 layout = html.Div(
 		[
 			html.Hr(),
 			html.H5("Reports of all Academics Achievement - Teacher's Note"),
-			html.Div(id='display-comments'),
+			html.Div(id='display-notes'),
 			html.Hr(),
 			html.P('Select the subject you wish to submit the notes:'),
 			html.Div([dcc.Dropdown(
@@ -31,7 +27,7 @@ layout = html.Div(
 				)]		
 			),
             html.Br(),
-			html.Div(id='submit-subject-comments')
+			html.Div(id='submit-subject-notes')
 		], className="sheet padding-10mm"
 		)
 		

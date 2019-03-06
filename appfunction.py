@@ -20,7 +20,7 @@ subject = {'MT':'Mathematics',
 
 sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
 sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
-sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
+sub_note = ['{}_notes'.format(sub) for sub in subject.keys()]
 
 def access_wsheet(item):
     """accessing worksheet based on item(input)"""
@@ -57,11 +57,13 @@ def new_name():
         [html.Tr([html.Th(col) for col in ['Name','Age']])] +
         #Body
         [html.Tr(
-            [html.Td(html.Div(dcc.Input(id='input-name',type='text')))] + 
-            [html.Td(html.Div(dcc.Input(id='input-age',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-name',type='text',placeholder='Input name here..')))] + 
+            [html.Td(html.Div(dcc.Input(id='input-age',type='text',placeholder='Input age here..')))]
                 )] +
         [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-new-button')))] +
+            [html.Td(html.Div(html.Button('Submit',id='submit-new-button')))]
+            )] +
+        [html.Tr(
             [html.Td(html.Div(id='container-new'),colSpan='2')]
             )]
         )
@@ -74,10 +76,12 @@ def update_name(name,age):
         [html.Tr(
             [html.Td(name)] + 
             [html.Td(age)] +
-            [html.Td(html.Div(dcc.Input(id='update-age',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='update-age',type='text',placeholder='Update age here..')))]
             )] +
         [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-update-button')))] +
+            [html.Td(html.Div(html.Button('Submit',id='submit-update-button')))]
+            )] +
+        [html.Tr(
             [html.Td(html.Div(id='container-update'),colSpan='2')]
             )]
         )
@@ -96,16 +100,16 @@ def grades_table(dataframe):
         ]
         )
 
-def comments_table(dataframe):
-    """return table for notes/comments of a student"""
+def notes_table(dataframe):
+    """return table for academic notes of a student"""
     return html.Table(
         # Header
         [html.Tr([html.Th(col) for col in ['Component','Competency and Accomplishment']])] +
         # Body
         [html.Tr(
             [html.Td(sub)] +
-            [html.Td([html.P(value) for index, value in dataframe[comments].str.split('\n',expand=True).items()])]
-            ) for sub,comments in zip(subject.values(),sub_com)
+            [html.Td([html.P(value) for index, value in dataframe[notes].str.split('\n',expand=True).items()])]
+            ) for sub,notes in zip(subject.values(),sub_note)
         ]
         )
 
@@ -120,6 +124,26 @@ def attitude(dataframe):
             ) for att in ['Akhlaq','Discipline','Diligent','Interaction','Respect']]
         )
 
+def attendance(dataframe,period):
+    '''return table for attendance'''
+    return html.Table(
+        #Header
+        [html.Tr([html.Th(col) for col in ['MONTH',period,'%']])] +
+        #Body
+        [html.Tr([html.Td('School days')] + [html.Td(dataframe['School days'],style=center)] + [html.Td(dataframe['Percentage'],style=center,rowSpan='3')])] +
+        [html.Tr([html.Td('Days of late')] + [html.Td(dataframe['Days of late'],style=center)])] +
+        [html.Tr([html.Td('Days of late')] + [html.Td(dataframe['Days of late'],style=center)])]
+        )
+
+def comments(dataframe):
+    '''return table for teacher's comment on student'''
+    return html.Table(
+        #Header
+        [html.Tr([html.Th("Teacher's Comment")])] +
+        #Body
+        [html.Tr([html.Td(dataframe['Comment'])])]
+        )
+
 def submit_sub_marks(dataframe,subcode,grade,marks):
     """return table for marks submission of a student based on selected subject"""
     return html.Table(
@@ -130,15 +154,15 @@ def submit_sub_marks(dataframe,subcode,grade,marks):
             [html.Td(subject.get(subcode))] + 
             [html.Td(dataframe[grade],style=center)] +
             [html.Td(dataframe[marks],style=center)] +
-            [html.Td(html.Div(dcc.Input(id='input-marks',type='number')))] + 
+            [html.Td(html.Div(dcc.Input(id='input-marks',type='number',placeholder='Input marks here..')))] + 
             [html.Td(html.Div(html.Button('Submit',id='submit-marks-button')))] +
             [html.Td(html.Div(id='container-marks'))]
             )
         ]
         )
 
-def submit_sub_comments(dataframe,subcode,comment):
-    """return table for notes/comments submission of a student based on selected subject"""
+def submit_sub_notes(dataframe,subcode,comment):
+    """return table for notes submission of a student based on selected subject"""
     return html.Table(
         #Header
         [html.Tr([html.Th(col) for col in ['Component to Submit','Notes (Before submission)']])] +
@@ -149,13 +173,13 @@ def submit_sub_comments(dataframe,subcode,comment):
             )
         ] +
         [html.Tr(
-            [html.Td(html.P("Notes/Comments to Submit"))] +
-            [html.Td(html.Div(dcc.Textarea(id='input-comments',placeholder='Enter your notes/comments here..',style={'width': '100%'})))] 
+            [html.Td(html.P("Notes to Submit"))] +
+            [html.Td(html.Div(dcc.Textarea(id='input-notes',placeholder='Enter your notes here..',style={'width': '100%'})))] 
             )
         ] +
         [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-comments-button')))] +
-            [html.Td(html.Div(id='container-comments'))]
+            [html.Td(html.Div(html.Button('Submit',id='submit-notes-button')))] +
+            [html.Td(html.Div(id='container-notes'))]
             )]
         )
 
@@ -168,26 +192,50 @@ def submit_attitude(dataframe):
         #Body
         [html.Tr(
             [html.Td(html.P('Akhlaq'))] + [html.Td(dataframe['Akhlaq'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-1',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-att-1',type='text',placeholder='Input grade here..')))]
             )] +
         [html.Tr(
             [html.Td(html.P('Discipline'))] + [html.Td(dataframe['Discipline'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-2',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-att-2',type='text',placeholder='Input grade here..')))]
             )] +
         [html.Tr(
             [html.Td(html.P('Diligent'))] + [html.Td(dataframe['Diligent'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-3',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-att-3',type='text',placeholder='Input grade here..')))]
             )] +
         [html.Tr(
             [html.Td(html.P('Interaction'))] + [html.Td(dataframe['Interaction'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-4',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-att-4',type='text',placeholder='Input grade here..')))]
             )] +
         [html.Tr(
             [html.Td(html.P('Respect'))] + [html.Td(dataframe['Respect'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-5',type='text')))]
+            [html.Td(html.Div(dcc.Input(id='input-att-5',type='text',placeholder='Input grade here..')))]
             )] +
         [html.Tr(
             [html.Td(html.Div(html.Button('Submit',id='submit-att-button')),colSpan='2')] +
             [html.Td(html.Div(id='container-att'))]
+        )]
+        )
+
+def submit_attendance(dataframe):
+    '''return table for attendance submission'''
+    return html.Table(
+        #Header
+        [html.Tr([html.Th(col) for col in ['Component','Data before submission','Input data ']])] +
+        #Body
+        [html.Tr(
+            [html.Td(html.P('School days'))] + [html.Td(dataframe['School days'],style=center)] + 
+            [html.Td(html.Div(dcc.Input(id='input-attend-1',type='number',placeholder='Input value here..')))]
+            )] +
+        [html.Tr(
+            [html.Td(html.P('Days of late'))] + [html.Td(dataframe['Days of late'],style=center)] + 
+            [html.Td(html.Div(dcc.Input(id='input-attend-2',type='number',placeholder='Input value here..')))]
+            )] +
+        [html.Tr(
+            [html.Td(html.P('Days of absent'))] + [html.Td(dataframe['Days of absent'],style=center)] + 
+            [html.Td(html.Div(dcc.Input(id='input-attend-3',type='number',placeholder='Input value here..')))]
+            )] +
+        [html.Tr(
+            [html.Td(html.Div(html.Button('Submit',id='submit-attendance-button')),colSpan='2')] +
+            [html.Td(html.Div(id='container-attendance'))]
         )]
         )

@@ -11,7 +11,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from oauth2client.service_account import ServiceAccountCredentials
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from apps import report, submit1, submit2, submit5, submit6
+from apps import report, submit1, submit2, submit5, submit6, submit7, submit8
 
 scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
@@ -62,6 +62,7 @@ fy.START_DATE = 1
 year_now = fy.FiscalDate.today().fiscal_year
 
 select_sem = ['{}/{}/{}'.format(num,year_now,year_now+1) for num in range(1,4)]
+select_period = ['APRIL - JULY {}'.format(year_now),'SEPTEMBER - DECEMBER {}'.format(year_now),'JANUARY - MARCH {}'.format(year_now+1)]
 
 #List of subject
 subject = {'MT':'Mathematics',
@@ -79,10 +80,6 @@ sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
 sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
 
 app = dash.Dash(__name__)
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
 
 app.index_string = '''
 <!DOCTYPE html>
@@ -123,16 +120,29 @@ def serve_layout():
                     options=[{'label':i,'value':i} for i in select_sem],
                     placeholder="Select semester"
                     ),
+                dcc.Dropdown(
+                    id='period-dropdown',
+                    options=[{'label':i,'value':i} for i in select_period],
+                    placeholder="Select period"
+                    ),
                 html.Hr(),
-                html.Div(id='display-value')
+                html.H6("Submit teacher's name"),
+                html.Div(dcc.Input(id='input-tname',type='text', placeholder='Enter your name here')),
+                html.Br(),
+                html.H6("Insert date for submission"),
+                html.Div(dcc.Input(id='input-date',type='text', placeholder='Example: 17th March 2019')),
+                html.Hr(),
+                html.Div(id='display-value'),
                 ], className="no-print sheet padding-10mm"),
-                    html.Br(),       
+                html.Br(),      
             dcc.Tabs(id='tabs-id', value='tab-report',children=[
                 dcc.Tab(label='Full Report', value='tab-report'),
                 dcc.Tab(label='Submit Marks and Grade (Academics)', value='tab-submit-grade'),
                 dcc.Tab(label='Submit Notes (Academics)', value='tab-submit-note'),
                 dcc.Tab(label='Submit Behaviour or Affectiveness', value='tab-submit-behaviour'),
                 dcc.Tab(label='Submit or Update Student', value='tab-submit-name'),
+                dcc.Tab(label="Submit Attendance", value='tab-submit-attendance'),
+                dcc.Tab(label="Submit Teacher's Comment", value='tab-submit-comments'),
                 ])], className="no-print"),
         html.Div(id='tab-contents')
         ])
@@ -157,6 +167,10 @@ def render_content(tab):
         return submit5.layout
     elif tab == 'tab-submit-name':
         return submit6.layout
+    elif tab == 'tab-submit-attendance':
+        return submit7.layout
+    elif tab == 'tab-submit-comments':
+        return submit8.layout
 
 #selected person
 @app.callback(
@@ -198,11 +212,11 @@ def display_fullgrade(name):
 
 #full report page - academic teacher's note table
 @app.callback(
-    Output('display-comments','children'),
+    Output('display-notes','children'),
     [Input('name-dropdown','value')])
-def display_comments(name):
+def display_notes(name):
     dfi = df[df.Name.isin([name])]
-    return appfunction.comments_table(dfi)
+    return appfunction.notes_table(dfi)
 
 #full report page - behaviour attitude table
 @app.callback(
@@ -212,7 +226,45 @@ def display_attitude(name):
     dfi = df[df.Name.isin([name])]
     return appfunction.attitude(dfi)
 
-#submit_grade - selected subject for submitting (marks table output)
+#full report page - attendance table
+@app.callback(
+    Output('display-attendance','children'),
+    [Input('name-dropdown','value'),
+    Input('period-dropdown','value')])
+def display_attendance(name,period):
+    dfi = df[df.Name.isin([name])]
+    return appfunction.attendance(dfi,period)
+
+#full report page - teacher's comments
+@app.callback(
+    Output('display-comments','children'),
+    [Input('name-dropdown','value')])
+def display_comments(name):
+    dfi = df[df.Name.isin([name])]
+    return appfunction.comments(dfi)
+
+#full report page - date
+@app.callback(
+    Output('display-date','children'),
+    [Input('input-date','n_submit'),
+    Input('input-date','n_blur')],
+    [State('input-date','value')])
+def display_attitude(ns, nb, date):
+    return html.P('TOKYO, {}'.format(date))
+
+#full report page - teacher's name
+@app.callback(
+    Output('display-tname','children'),
+    [Input('input-tname','n_submit'),
+    Input('input-tname','n_blur')],
+    [State('input-tname','value')])
+def display_attitude(ns, nb, tname):
+    return html.Div([html.P('Name of Teacher: {}'.format(tname)),
+        html.Br(), html.P('Signature : '),
+        html.Br(), html.Br(), html.Br()
+        ])
+
+#submit1 - selected subject for submitting (marks table output)
 @app.callback(
     Output('submit-subject-marks','children'),
     [Input('subject-dropdown','value'),
@@ -223,7 +275,7 @@ def marks_submit_table(subcode,name):
     marks = '{}_marks'.format(subcode)
     return appfunction.submit_sub_marks(dfi,subcode,grade,marks)
 
-#submit_grade - update cell (marks)
+#submit1 - update cell (marks)
 @app.callback(
     Output('container-marks','children'),
     [Input('submit-marks-button','n_clicks'),
@@ -237,39 +289,39 @@ def submit_marks(clicks, submit, name, subcode, value):
     sub_col = works.find((subject.get(subcode)).upper()).col
     works.update_cell(sub_row,sub_col,value)
 
-#submit_notes - selected subject for submitting (comments table output)
+#submit2 - selected subject for submitting (notes table output)
 @app.callback(
-    Output('submit-subject-comments','children'),
+    Output('submit-subject-notes','children'),
     [Input('subject-dropdown','value'),
     Input('name-dropdown','value')])
-def comments_submit_table(subcode,name):
+def notes_submit_table(subcode,name):
     dfi = df[df.Name.isin([name])]
-    comments = '{}_comments'.format(subcode)
-    return appfunction.submit_sub_comments(dfi,subcode,comments)
+    notes = '{}_notes'.format(subcode)
+    return appfunction.submit_sub_notes(dfi,subcode,notes)
 
-#submit_notes - update cell (notes/comments)
+#submit2 - update cell (notes)
 @app.callback(
-    Output('container-comments','children'),
-    [Input('submit-comments-button','n_clicks'),
-    Input('submit-comments-button','n_submit'),
+    Output('container-notes','children'),
+    [Input('submit-notes-button','n_clicks'),
+    Input('submit-notes-button','n_submit'),
     Input('name-dropdown','value'),
     Input('subject-dropdown','value')],
-    [State('input-comments','value')])
-def submit_comments(clicks, submit, name, subcode, value):
-    works = appfunction.access_wsheet('com')
+    [State('input-notes','value')])
+def submit_notes(clicks, submit, name, subcode, value):
+    works = appfunction.access_wsheet('notes')
     sub_row = works.find(name).row
     sub_col = works.find((subject.get(subcode)).upper()).col
     works.update_cell(sub_row,sub_col,value)
 
-#submit_behaviour - selected name for submitting (comments table output)
+#submit5 - selected name for submitting (attitude table output)
 @app.callback(
     Output('submit-attitude','children'),
     [Input('name-dropdown','value')])
-def submit_attitude(name):
+def attitude_submit_table(name):
     dfi = df[df.Name.isin([name])]
     return appfunction.submit_attitude(dfi)
 
-#submit_behaviour - update cell (attitude/behaviour)
+#submit5 - update cell (attitude/behaviour)
 @app.callback(
     Output('container-att','children'),
     [Input('submit-att-button','n_clicks'),
@@ -277,7 +329,7 @@ def submit_attitude(name):
     Input('name-dropdown','value')],
     [State('input-att-1','value'), State('input-att-2','value'), State('input-att-3','value'),
     State('input-att-4','value'), State('input-att-5','value')])
-def submit_comments(clicks, submit, name, val1, val2, val3, val4, val5):
+def submit_attitde(clicks, submit, name, val1, val2, val3, val4, val5):
     works = appfunction.access_wsheet('att behaviour')
     sub_row = works.find(name).row
     works.update_cell(sub_row, works.find('Akhlaq').col, val1)
@@ -286,7 +338,7 @@ def submit_comments(clicks, submit, name, val1, val2, val3, val4, val5):
     works.update_cell(sub_row, works.find('Interaction').col, val4)
     works.update_cell(sub_row, works.find('Respect').col, val5)
 
-#submit_name - selection
+#submit6 - selection
 @app.callback(
     Output('display-submit','children'), 
     [Input('update-dropdown','value'),
@@ -298,7 +350,7 @@ def display_selection(value,name):
     elif value == 'SUB':
         return appfunction.new_name()
 
-#submit_name - new student submission
+#submit6 - new student submission
 @app.callback(
     Output('container-new','children'),
     [Input('submit-new-button','n_clicks'),
@@ -319,7 +371,7 @@ def submit_name(clicks, submit, name, age):
     else:
         return html.P('The name is already available.')
 
-#submit_name - update student info
+#submit6 - update student info
 @app.callback(
     Output('container-update','children'),
     [Input('submit-update-button','n_clicks'),
@@ -329,6 +381,42 @@ def submit_name(clicks, submit, name, age):
 def submit_update(clicks, submit, name, age):
     sub_row = wks.find(name).row
     wks.update_cell(sub_row, 2, age)
+
+#submit7 - selected name for submitting (attendance table output)
+@app.callback(
+    Output('submit-attendance','children'),
+    [Input('name-dropdown','value')])
+def attendance_submit_table(name):
+    dfi = df[df.Name.isin([name])]
+    return appfunction.submit_attendance(dfi)
+
+#submit7 - update cell (attendance)
+@app.callback(
+    Output('container-attendance','children'),
+    [Input('submit-attendance-button','n_clicks'),
+    Input('submit-attendance-button','n_submit'),
+    Input('name-dropdown','value')],
+    [State('input-attend-1','value'), 
+    State('input-attend-2','value'), 
+    State('input-attend-3','value')])
+def submit_attitde(clicks, submit, name, val1, val2, val3):
+    works = appfunction.access_wsheet('attendance')
+    sub_row = works.find(name).row
+    works.update_cell(sub_row, works.find('School days').col, val1)
+    works.update_cell(sub_row, works.find('Days of late').col, val2)
+    works.update_cell(sub_row, works.find('Days of absent').col, val3)
+
+#submit8 - update cell (comment)
+@app.callback(
+    Output('container-comment','children'),
+    [Input('submit-comment-button','n_clicks'),
+    Input('submit-comment-button','n_submit'),
+    Input('name-dropdown','value')],
+    [State('input-comment','value')])
+def submit_comment(clicks, submit, name, comment):
+    works = appfunction.access_wsheet('comments')
+    sub_row = works.find(name).row
+    works.update_cell(sub_row, works.find('Comment').col, comment)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

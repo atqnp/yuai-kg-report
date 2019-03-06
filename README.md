@@ -1,6 +1,10 @@
 # yuai-kg-report
 YUAI Kindergarten Report Card
 
+v1.2.1
+----
+- bug fixes
+
 v1.2.0
 ----
 - added attendance

@@ -75,11 +75,11 @@ subject = {'MT':'Mathematics',
             'TF':'Tahfidz Juz 30',  
             'QR':'Qiraati (Nurul Bayan)'} 
 
-sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
-sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
-sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
-
 app = dash.Dash(__name__)
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 app.index_string = '''
 <!DOCTYPE html>
@@ -106,7 +106,7 @@ get_data()
 
 def serve_layout():
     return html.Div([
-        html.H3('YUAI International Islamic School - Kindergarten Progress Report Card', className="no-print"),
+        html.H4('YUAI International Islamic School - Kindergarten Progress Report Card', className="no-print", style={'text-align':'center'}),
         #header,
         html.Div([
             html.Div([
@@ -420,3 +420,4 @@ def submit_comment(clicks, submit, name, comment):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+

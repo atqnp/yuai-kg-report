@@ -13,6 +13,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from apps import report, submit1, submit2, submit5, submit6, submit7, submit8
 
+center = {'text-align':'center'}
+
 scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
 
@@ -65,21 +67,21 @@ select_sem = ['{}/{}/{}'.format(num,year_now,year_now+1) for num in range(1,4)]
 select_period = ['APRIL - JULY {}'.format(year_now),'SEPTEMBER - DECEMBER {}'.format(year_now),'JANUARY - MARCH {}'.format(year_now+1)]
 
 #List of subject
-subject = {'MT':'Mathematics',
+subject = {'TF':'Tahfidz Juz 30',
+            'QR':'Qiraati (Nurul Bayan)',
+            'MT':'Mathematics',
             'EN':'English',
             'WS':'Writing Skill',
-            'MSC':'Motor Skill and Coordination',    
-            'SMD':'Social and Moral Development',    
-            'ES':'Environmental Studies',   
+            'MSC':'Motor Skill and Coordination',
             'WH':'Work Habits',
-            'TF':'Tahfidz Juz 30',  
-            'QR':'Qiraati (Nurul Bayan)'} 
+            'ES':'Environmental Studies',    
+            'SMD':'Social and Moral Development'} 
+
+sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
+sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
+sub_com = ['{}_comments'.format(sub) for sub in subject.keys()]
 
 app = dash.Dash(__name__)
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
 
 app.index_string = '''
 <!DOCTYPE html>
@@ -106,7 +108,7 @@ get_data()
 
 def serve_layout():
     return html.Div([
-        html.H4('YUAI International Islamic School - Kindergarten Progress Report Card', className="no-print", style={'text-align':'center'}),
+        html.H3('YUAI International Islamic School - Kindergarten Progress Report Card', className="no-print"),
         #header,
         html.Div([
             html.Div([
@@ -188,11 +190,7 @@ def display_value(name):
     Input('semester-dropdown','value')])
 def display_info(name,sem):
     dfi = df[df.Name.isin([name])]
-    age = dfi['Age'].item()
-    return html.Div([html.P('Name : {}'.format(name)),
-        html.Br(), html.P('Age : {}'.format(age)),
-        html.Br(), html.P('Semester : {}'.format(sem)),
-        ])
+    return appfunction.student_info(name,dfi,sem)
 
 #full report page - grades and marks table
 @app.callback(
@@ -209,6 +207,13 @@ def display_grade(name):
 def display_fullgrade(name):
     dfi = df[df.Name.isin([name])]
     return appfunction.academic_report(dfi)
+
+#full report page - grade table
+@app.callback(
+    Output('display-range','children'),
+    [Input('name-dropdown','value')])
+def display_table(name):
+    return appfunction.grade_range()
 
 #full report page - academic teacher's note table
 @app.callback(
@@ -262,6 +267,21 @@ def display_attitude(ns, nb, tname):
     return html.Div([html.P('Name of Teacher: {}'.format(tname)),
         html.Br(), html.P('Signature : '),
         html.Br(), html.Br(), html.Br()
+        ])
+
+#full report page - parent's
+@app.callback(
+    Output('display-parent','children'),
+    [Input('input-tname','n_submit'),
+    Input('input-tname','n_blur')],
+    [State('input-tname','value')])
+def display_attitude(ns, nb, tname):
+    return html.Div([html.P('Name of Parents:'),
+        html.Br(), html.P('Signature : '),
+        html.Br(), html.Br(), html.Br(), html.Br(),
+        html.P('Headmistress : Yetti Dalimi'),
+        html.Br(),
+        html.P('Signature :'),
         ])
 
 #submit1 - selected subject for submitting (marks table output)
@@ -420,4 +440,3 @@ def submit_comment(clicks, submit, name, comment):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-

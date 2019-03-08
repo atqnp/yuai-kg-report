@@ -8,15 +8,15 @@ from oauth2client.service_account import ServiceAccountCredentials
 #center style for table
 center = {'text-align':'center'}
 
-subject = {'MT':'Mathematics',
+subject = {'TF':'Tahfidz Juz 30',
+            'QR':'Qiraati (Nurul Bayan)',
+            'MT':'Mathematics',
             'EN':'English',
             'WS':'Writing Skill',
-            'MSC':'Motor Skill and Coordination',    
-            'SMD':'Social and Moral Development',    
-            'ES':'Environmental Studies',   
+            'MSC':'Motor Skill and Coordination',
             'WH':'Work Habits',
-            'TF':'Tahfidz Juz 30',  
-            'QR':'Qiraati (Nurul Bayan)'} 
+            'ES':'Environmental Studies',    
+            'SMD':'Social and Moral Development'} 
 
 sub_grade = ['{}_grade'.format(sub) for sub in subject.keys()]
 sub_marks = ['{}_marks'.format(sub) for sub in subject.keys()]
@@ -86,42 +86,61 @@ def update_name(name,age):
             )]
         )
 
+def student_info(name,dataframe,sem):
+    return html.Table(
+        [html.Tr([html.Td('Name',className="no-border")] + 
+            [html.Td(':',style=center,className="no-border")] + 
+            [html.Td(name,className="no-border")]
+            )] +
+        [html.Tr([html.Td('Age',className="no-border")] + 
+            [html.Td(':',style=center,className="no-border")] + 
+            [html.Td(dataframe['Age'],className="no-border")]
+            )] +
+        [html.Tr([html.Td('Semester',className="no-border")] + 
+            [html.Td(':',style=center,className="no-border")] + 
+            [html.Td(sem,className="no-border")]
+            )], 
+        className="no-border"
+        )
+
 def grades_table(dataframe):
     """return table for marks and grades of a student"""
     return html.Table(
         # Header
-        [html.Tr([html.Th(col) for col in ['Component','Grade','Marks']])] +
+        [html.Tr([html.Th(col) for col in ['No','Component','Grade']])] +
         # Body
         [html.Tr(
+            [html.Td(no,style=center)] +
             [html.Td(sub)] +
-            [html.Td(dataframe[grade],style=center)] +
-            [html.Td(dataframe[marks],style=center)]
-            ) for sub,grade,marks in zip(subject.values(),sub_grade,sub_marks)
-        ]
+            [html.Td(dataframe[grade],style=center)]
+            ) for no,sub,grade in zip(list(range(1,len(sub_grade)+1)),subject.values(),sub_grade)
+        ],className="widetable"
         )
 
 def notes_table(dataframe):
     """return table for academic notes of a student"""
     return html.Table(
         # Header
-        [html.Tr([html.Th(col) for col in ['Component','Competency and Accomplishment']])] +
+        [html.Tr([html.Th(col) for col in ['No','Component','Competency and Accomplishment']])] +
         # Body
         [html.Tr(
+            [html.Td(no,style=center)] +
             [html.Td(sub)] +
             [html.Td([html.P(value) for index, value in dataframe[notes].str.split('\n',expand=True).items()])]
-            ) for sub,notes in zip(subject.values(),sub_note)
+            ) for no,sub,notes in zip(list(range(1,len(sub_note)+1)),subject.values(),sub_note)
         ]
         )
 
 def attitude(dataframe):
     """return table for attitude grades of a student"""
+    attlist = ['Akhlaq','Discipline','Diligent','Interaction','Respect']
     return html.Table(
         #Header
-        [html.Tr([html.Th(col) for col in ['Component','Grade']])] +
+        #[html.Tr([html.Th(col) for col in ['Component','Grade']])] +
         #Body
         [html.Tr(
-            [html.Td(att)] + [html.Td(dataframe[att],style=center)]
-            ) for att in ['Akhlaq','Discipline','Diligent','Interaction','Respect']]
+            [html.Td(no,style=center)] + [html.Td(att,style=center)] + [html.Td(dataframe[att],style=center)]
+            ) for no,att in zip(list(range(1,len(attlist)+1)),attlist)],className="widetable"
         )
 
 def attendance(dataframe,period):
@@ -132,7 +151,7 @@ def attendance(dataframe,period):
         #Body
         [html.Tr([html.Td('School days')] + [html.Td(dataframe['School days'],style=center)] + [html.Td(dataframe['Percentage'],style=center,rowSpan='3')])] +
         [html.Tr([html.Td('Days of late')] + [html.Td(dataframe['Days of late'],style=center)])] +
-        [html.Tr([html.Td('Days of absent')] + [html.Td(dataframe['Days of absent'],style=center)])]
+        [html.Tr([html.Td('Days of absent')] + [html.Td(dataframe['Days of absent'],style=center)])],className="widetable"
         )
 
 def comments(dataframe):
@@ -141,7 +160,7 @@ def comments(dataframe):
         #Header
         [html.Tr([html.Th("Teacher's Comment")])] +
         #Body
-        [html.Tr([html.Td(dataframe['Comment'])])]
+        [html.Tr([html.Td(dataframe['Comment'])])], className="fulltable"
         )
 
 def submit_sub_marks(dataframe,subcode,grade,marks):
@@ -220,7 +239,7 @@ def submit_attendance(dataframe):
     '''return table for attendance submission'''
     return html.Table(
         #Header
-        [html.Tr([html.Th(col) for col in ['Component','Data before submission','Input data ']])] +
+        [html.Tr([html.Th(col) for col in ['Component','Data before submission','Input data']])] +
         #Body
         [html.Tr(
             [html.Td(html.P('School days'))] + [html.Td(dataframe['School days'],style=center)] + 
@@ -238,4 +257,22 @@ def submit_attendance(dataframe):
             [html.Td(html.Div(html.Button('Submit',id='submit-attendance-button')),colSpan='2')] +
             [html.Td(html.Div(id='container-attendance'))]
         )]
+        )
+
+def grade_range():
+    return html.Table(
+        [html.Tr([html.Th('Range',style=center)] + [html.Th('Grade',style=center)]
+            )] +
+        [html.Tr([html.Td('90 - 100',style=center)] + [html.Td('A+',style=center)]
+            )] +
+        [html.Tr([html.Td('80 - 89',style=center)] + [html.Td('A',style=center)]
+            )] +
+        [html.Tr([html.Td('70 - 79',style=center)] + [html.Td('B+',style=center)]
+            )] +
+        [html.Tr([html.Td('60 - 69',style=center)] + [html.Td('B',style=center)]
+            )] +
+        [html.Tr([html.Td('50 - 59',style=center)] + [html.Td('C',style=center)]
+            )] +
+        [html.Tr([html.Td('0 - 49',style=center)] + [html.Td('F',style=center)]
+            )],className="narrowtable"
         )

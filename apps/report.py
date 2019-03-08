@@ -23,13 +23,12 @@ layout = html.Div(
                 html.Hr(),
                 html.Div(id='display-comments'),
                 html.Hr(),
+                html.Div(id='display-range'),
+                html.Hr(),
                 html.Div(id='display-date'),
                 html.Br(),
                 html.Div(id='display-tname'),
-                html.Br(),
-                html.P('Headmistress : Yetti Dalimi'),
-                html.Br(),
-                html.P('Signature :'),
+                html.Div(id='display-parent'),
                 ], className="sheet padding-10mm"),
         ]
     )

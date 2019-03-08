@@ -346,31 +346,35 @@ table {
   border-collapse: collapse;
   page-break-inside: auto;
 }
+.widetable {width: 60%;}
+.narrowtable {width: 40%}
+.fulltable {width: 100%}
+.no-border {border: solid #FFFFFF;}
 th {
-  padding: 5px;
-  margin: 3px;
+  padding: 10px;
+  margin: 0px;
   text-align: center;
   vertical-align: center;
   border: 2px solid #000000; }
+.no-border {border: solid #FFFFFF;}
 tr {
   page-break-inside: avoid;
   page-break-after: auto;
 }
+.no-border {border: solid #FFFFFF;}
 td {
-  padding: 5px;
-  margin: 3px;
+  padding: 10px;
+  margin: 0px;
   text-align: left;
   vertical-align: center;
   border: 1px solid #000000; }
+.no-border {border: solid #FFFFFF;}
 th:first-child,
 td:first-child {
-  padding: 3px;
-  margin: 3px;
 }
 th:last-child,
 td:last-child {
-  padding: 3px;
-  margin: 3px; }
+}
 
 
 /* Spacing
@@ -416,6 +420,13 @@ hr {
   border-width: 0;
   border-top: 1px solid #E1E1E1; }
 
+#display-tname{
+  float: right;
+}
+
+#display-parent{
+  float: left;
+}
 
 /* Clearing
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

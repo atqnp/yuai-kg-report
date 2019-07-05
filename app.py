@@ -142,9 +142,9 @@ def serve_layout():
                 dcc.Tab(label='Submit Marks and Grade (Academics)', value='tab-submit-grade'),
                 dcc.Tab(label='Submit Notes (Academics)', value='tab-submit-note'),
                 dcc.Tab(label='Submit Behaviour or Affectiveness', value='tab-submit-behaviour'),
-                dcc.Tab(label='Submit or Update Student', value='tab-submit-name'),
                 dcc.Tab(label="Submit Attendance", value='tab-submit-attendance'),
                 dcc.Tab(label="Submit Teacher's Comment", value='tab-submit-comments'),
+                dcc.Tab(label='Submit or Update Student', value='tab-submit-name'),
                 ])], className="no-print"),
         html.Div(id='tab-contents')
         ])

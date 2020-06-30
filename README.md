@@ -4,6 +4,7 @@ YUAI Kindergarten Report Card
 v1.3.0
 ----
 - remove fields to submit/update
+- update to python 3.7
 
 v1.2.1
 ----

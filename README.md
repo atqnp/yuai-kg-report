@@ -1,6 +1,10 @@
 # yuai-kg-report
 YUAI Kindergarten Report Card
 
+v1.3.0
+----
+- remove fields to submit/update
+
 v1.2.1
 ----
 - bug fixes

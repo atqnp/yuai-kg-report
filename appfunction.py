@@ -51,42 +51,9 @@ def access_wsheet(item):
     wks = sheet.worksheet(access)
     return wks
 
-def new_name():
-    return html.Table(
-        #Header
-        [html.Tr([html.Th(col) for col in ['Name','Age']])] +
-        #Body
-        [html.Tr(
-            [html.Td(html.Div(dcc.Input(id='input-name',type='text',placeholder='Input name here..')))] + 
-            [html.Td(html.Div(dcc.Input(id='input-age',type='text',placeholder='Input age here..')))]
-                )] +
-        [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-new-button')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.Div(id='container-new'),colSpan='2')]
-            )]
-        )
-
-def update_name(name,age):
-    return html.Table(
-        #Header
-        [html.Tr([html.Th(col) for col in ['Name','Age (Previously submitted)', 'Age']])] +
-        #Body
-        [html.Tr(
-            [html.Td(name)] + 
-            [html.Td(age)] +
-            [html.Td(html.Div(dcc.Input(id='update-age',type='text',placeholder='Update age here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-update-button')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.Div(id='container-update'),colSpan='2')]
-            )]
-        )
 
 def student_info(name,dataframe,sem):
+    '''return table for student's main information'''
     return html.Table(
         [html.Tr([html.Td('Name',className="no-border")] + 
             [html.Td(':',style=center,className="no-border")] + 
@@ -103,8 +70,9 @@ def student_info(name,dataframe,sem):
         className="no-border"
         )
 
+
 def grades_table(dataframe):
-    """return table for marks and grades of a student"""
+    '''return table for marks and grades of a student'''
     return html.Table(
         # Header
         [html.Tr([html.Th(col) for col in ['No','Component','Grade']])] +
@@ -117,8 +85,9 @@ def grades_table(dataframe):
         ],className="widetable"
         )
 
+
 def notes_table(dataframe):
-    """return table for academic notes of a student"""
+    '''return table for academic notes of a student'''
     return html.Table(
         # Header
         [html.Tr([html.Th(col) for col in ['No','Component','Competency and Accomplishment']])] +
@@ -131,8 +100,9 @@ def notes_table(dataframe):
         ]
         )
 
+
 def attitude(dataframe):
-    """return table for attitude grades of a student"""
+    '''return table for attitude grades of a student'''
     attlist = ['Akhlaq','Discipline','Diligent','Interaction','Respect']
     return html.Table(
         #Header
@@ -142,6 +112,7 @@ def attitude(dataframe):
             [html.Td(no,style=center)] + [html.Td(att,style=center)] + [html.Td(dataframe[att],style=center)]
             ) for no,att in zip(list(range(1,len(attlist)+1)),attlist)],className="widetable"
         )
+
 
 def attendance(dataframe,period):
     '''return table for attendance'''
@@ -154,6 +125,7 @@ def attendance(dataframe,period):
         [html.Tr([html.Td('Days of absent')] + [html.Td(dataframe['Days of absent'],style=center)])],className="widetable"
         )
 
+
 def comments(dataframe):
     '''return table for teacher's comment on student'''
     return html.Table(
@@ -163,101 +135,6 @@ def comments(dataframe):
         [html.Tr([html.Td(dataframe['Comment'])])], className="fulltable"
         )
 
-def submit_sub_marks(dataframe,subcode,grade,marks):
-    """return table for marks submission of a student based on selected subject"""
-    return html.Table(
-        #Header
-        [html.Tr([html.Th(col) for col in ['Component to Submit','Grade (Before submission)','Marks (Before submission)']])] +
-        #Body
-        [html.Tr(
-            [html.Td(subject.get(subcode))] + 
-            [html.Td(dataframe[grade],style=center)] +
-            [html.Td(dataframe[marks],style=center)] +
-            [html.Td(html.Div(dcc.Input(id='input-marks',type='number',placeholder='Input marks here..')))] + 
-            [html.Td(html.Div(html.Button('Submit',id='submit-marks-button')))] +
-            [html.Td(html.Div(id='container-marks'))]
-            )
-        ]
-        )
-
-def submit_sub_notes(dataframe,subcode,comment):
-    """return table for notes submission of a student based on selected subject"""
-    return html.Table(
-        #Header
-        [html.Tr([html.Th(col) for col in ['Component to Submit','Notes (Before submission)']])] +
-        #Body
-        [html.Tr(
-            [html.Td(subject.get(subcode))] + 
-            [html.Td([html.P(value) for index, value in dataframe[comment].str.split('\n',expand=True).items()])]
-            )
-        ] +
-        [html.Tr(
-            [html.Td(html.P("Notes to Submit"))] +
-            [html.Td(html.Div(dcc.Textarea(id='input-notes',placeholder='Enter your notes here..',style={'width': '100%'})))] 
-            )
-        ] +
-        [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-notes-button')))] +
-            [html.Td(html.Div(id='container-notes'))]
-            )]
-        )
-
-def submit_attitude(dataframe):
-    """return table for attitude grades submission of a student"""
-    return html.Table(
-        [html.Tr(html.Th(html.P('Changes/Input for submission'),colSpan='3'))] +
-        #Header
-        [html.Tr([html.Th(col) for col in ['Component','Grade (Before submission)','']])] +
-        #Body
-        [html.Tr(
-            [html.Td(html.P('Akhlaq'))] + [html.Td(dataframe['Akhlaq'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-1',type='text',placeholder='Input grade here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Discipline'))] + [html.Td(dataframe['Discipline'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-2',type='text',placeholder='Input grade here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Diligent'))] + [html.Td(dataframe['Diligent'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-3',type='text',placeholder='Input grade here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Interaction'))] + [html.Td(dataframe['Interaction'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-4',type='text',placeholder='Input grade here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Respect'))] + [html.Td(dataframe['Respect'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-att-5',type='text',placeholder='Input grade here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-att-button')),colSpan='2')] +
-            [html.Td(html.Div(id='container-att'))]
-        )]
-        )
-
-def submit_attendance(dataframe):
-    '''return table for attendance submission'''
-    return html.Table(
-        #Header
-        [html.Tr([html.Th(col) for col in ['Component','Data before submission','Input data']])] +
-        #Body
-        [html.Tr(
-            [html.Td(html.P('School days'))] + [html.Td(dataframe['School days'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-attend-1',type='number',placeholder='Input value here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Days of late'))] + [html.Td(dataframe['Days of late'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-attend-2',type='number',placeholder='Input value here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.P('Days of absent'))] + [html.Td(dataframe['Days of absent'],style=center)] + 
-            [html.Td(html.Div(dcc.Input(id='input-attend-3',type='number',placeholder='Input value here..')))]
-            )] +
-        [html.Tr(
-            [html.Td(html.Div(html.Button('Submit',id='submit-attendance-button')),colSpan='2')] +
-            [html.Td(html.Div(id='container-attendance'))]
-        )]
-        )
 
 def grade_range():
     return html.Table(
